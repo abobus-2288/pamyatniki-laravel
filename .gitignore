@@ -14,5 +14,4 @@ yarn-error.log
 /.vscode
 /public/js
 /public/images
-/bootstrap/cache/
 /storage/
