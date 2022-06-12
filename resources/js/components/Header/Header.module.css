@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    position: absolute;
+    width: 100%;
+}
+
+.header_desktop {
+    background-color: black;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    /*position: absolute;*/
+}
+
+.header_mobile {
+    background-color: black;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.menu {
+    background-color: black;
+    border: none;
+    margin-left: 15px;
+    width: 34px;
+    height: 27px;
+}
+
+.menu_closed {
+    background-image: url("img/Menu.png");
+}
+
+.menu_opened {
+    background-image: url("img/menu-close.png");
+    /*width: 27px;*/
+    background-repeat: no-repeat;
+}
+
+.logo {
+    /*margin: auto;*/
+    flex-grow: 3;
+    text-align: center;
+}
+
+.logo img {
+    margin-left: 100px;
+}
+
+.donateButton {
+    text-decoration: none;
+    width: 165px;
+    height: 40px;
+    background-color: rgba(226, 188, 50, 1);
+    text-align: center;
+    vertical-align: middle;
+    color: black;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.donateButtonText {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.headerIcon {
+    margin: 20px;
+}
+
+
+/* Нижняя часть */
+
+.main_desktop {
+    background-color: rgb(21, 21, 21);
+    border: #505050 1.5px solid;
+    border-left: none;
+    position: absolute;
+    height: 404px;
+}
+
+.main_mobile {
+    background-color: rgb(21, 21, 21);
+    border: #505050 1.5px solid;
+    border-left: none;
+    position: absolute;
+    width: 100%;
+    height: 200px;
+}
+
+.main_closed {
+    display: none;
+    border: none;
+}
+
+.main_opened {
+    width: 100%;
+    height: max-content;
+    display: flex;
+}
+
+.categories {
+    margin-left: 20px;
+    padding-right: 50px;
+    border-left: #505050 1.5px;
+}
+
+.categories h3 {
+    color: #8A8A8A;
+    font-size: 30px;
+    font-weight: normal;
+    margin-bottom: 57px;
+    margin-top: 30px;
+}
+
+.categories a {
+    text-decoration: none;
+    color: white;
+    font-weight: 400;
+    font-size: 30px;
+}
+
+.categories li {
+    list-style-type: none;
+    margin: 10px 0 10px 0;
+}
+
+.countries {
+    width: 100%;
+    border-left: #505050 1px solid;
+}
+
+.countries li {
+    list-style-type: none;
+    display: inline-block;
+    margin: 30px;
+    font-weight: 500;
+    font-size: 30px;
+    color: rgb(138, 138, 138);
+}
+
+.countries a.actvie {
+    color: white;
+    text-decoration: underline white;
+}
+
+.countries__rows {
+    display: flex;
+}
+
+.countries__row {
+    width: 33%;
+    margin-left: 30px;
+}
+
+.countries__country {
+    margin: 15px;
+}
+
+.countries__country a {
+    margin-left: 30px;
+    text-decoration: none;
+    color: white;
+    font-size: 26px;
+}
+
+.countries__all {
+    margin: 0 35px;
+}
+
+.countries__all a {
+    color: #28783E;
+    font-weight: 500;
+    font-size: 26px;
+}
+
+/*
+ Табы
+*/
+
+.reactTabs {
+    display: flex;
+    height: 100%;
+}
+
+.tab {
+    margin: 4px 4px 4px 10px;
+    color: white;
+    list-style-type: none;
+    font-size: 15px;
+}
+
+.tab__selected {
+    text-decoration: underline rgb(255, 255, 255);
+}
+
+.reactTabsTabPanel {
+    padding-left: 5px;
+    display: none;
+}
+
+.reactTabsTabPanelSelected {
+    width: 100%;
+    display: block;
+}
+
+.tabsCategories {
+    padding-top: 15px;
+    height: 100%;
+    border: 1px solid #505050;
+    border-top: none;
+}
+
+.categoriesMobile li {
+    list-style-type: none;
+    margin: 5px;
+    color: rgb(138, 138, 138);
+}
+
+.categoriesMobile a {
+    text-decoration: none;
+    color: white;
+    font-weight: 400;
+    font-size: 10px;
+}
+
+.reactTabs h3 {
+    color: #8A8A8A;
+    font-size: 15px;
+    font-weight: normal;
+    margin-bottom: 10px;
+    margin-top: 30px;
+}
+
+.tabGroupSeparator {
+    width: 100%;
+    height: 1px;
+    background: rgb(21,21,21);
+    background: linear-gradient(90deg, rgba(21,21,21,1) 0%, rgba(0,0,0,1) 35%, rgba(0,0,0,1) 65%, rgba(21,21,21,1) 100%);
+}
+
+.tab:last-of-type {
+    padding-bottom: 10px;
+}
+
+.tabCountries {
+    display: flex;
+}
+
+.tabCountries__row {
+    margin: 7px;
+}
+
+.tabCountries__country {
+
+}
+
+.tabCountries__country:last-of-type {
+    padding-bottom: 10px;
+}
+
+.tabCountries__country img {
+    width: 15px;
+}
+
+.tabCountries__country a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Адаптив */
+
+@media (max-width: 768px) {
+    .tabCountries {
+        flex-direction: column;
+    }
+
+    .tabCountries__row {
+        margin: 0 7px 0 7px;
+    }
+}
+
+@media (min-width: 1311px) {
+    .header_mobile {
+        display: none;
+    }
+
+    .main_mobile {
+        display: none
+    }
+}
+
+@media (max-width: 1310px) {
+
+    header {
+        width: 100%;
+    }
+
+    .header_desktop {
+        display: none;
+    }
+
+    .countries ul li {
+        display: block;
+    }
+
+    .main_desktop {
+        display: none;
+    }
+
+    .countries__all {
+        padding-bottom: 35px;
+    }
+
+    .countries__row {
+        width: 100%;
+    }
+
+    .countries__rows {
+        flex-direction: column;
+    }
+
+    .logo {
+        width: 30%;
+    }
+
+    .logo img {
+        margin: 0;
+    }
+}
+
