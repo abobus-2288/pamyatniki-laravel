@@ -10,11 +10,14 @@
         "laravel/framework": "^9.11",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
+        "mll-lab/graphql-php-scalars": "^5.4",
+        "mll-lab/laravel-graphql-playground": "^2.6",
         "nuwave/lighthouse": "^5.53"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
+        "mll-lab/laravel-db-ready": "^4.0",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
         "phpunit/phpunit": "^9.5.10",
