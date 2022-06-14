@@ -25,7 +25,7 @@ RewriteEngine on
 #RewriteCond %{REQUEST_URI} !^public
 RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
-
+<IfModule>
 RewriteEngine On
 
 # If we receive a forwarded http request from a proxy...
@@ -39,3 +39,4 @@ RewriteCond %{HTTPS} !=on
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Put the rest of your rewrite rules here
+</IfModule>
