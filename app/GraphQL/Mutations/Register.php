@@ -14,30 +14,6 @@ final class Register
      */
     public function __invoke($_, array $args)
     {
-//        $user = new User();
-//        if (User::query()->first()->where('email', $args['email']) !== null) {
-//            $emailIsOccupied = true;
-//        }
-//        elseif (!User::query()->first()->where('email', $args['email']) == null) {
-//            $emailIsOccupied = false;
-//        }
-//
-//        if (!$emailIsOccupied)
-//        {
-//             $user = User::query()->create([
-//                'name' => $args['name'],
-//                'email' => $args['email'],
-//                'password' => Hash::make($args['password'])
-//            ]);
-//        }
-//
-//        $token = $user->createToken('auth_token')->plainTextToken;
-//
-//        $return = [
-//            'user' => $user,
-//            'message' => 'Ok',
-//            'token' => $token,
-//        ];
         if (User::query()->where('email', '=', $args['email']) == null) {
             $user = User::create([
                 'name' => $args['name'],
