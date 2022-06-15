@@ -70,5 +70,5 @@ type LogoutResponse {
 type Mutation {
     register(input: RegisterInput! @spread): RegisterResponse
     login(input: LoginInput! @spread): LoginResponse
-    logout: LogoutResponse@guard
+    logout: LogoutResponse @guard
 }
