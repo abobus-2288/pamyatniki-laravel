@@ -18,5 +18,7 @@ Route::get('/', function () {
 });
 
 Route::get('{reactRoutes}', function () {
+    $users = \App\Models\User::query()->first();
+    dd($users);
     return view('welcome');
 })->where('reactRoutes', '^((?!api).)*$');
