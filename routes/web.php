@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::redirect('/public', '/');
 
 Route::get('{reactRoutes}', function () {
     return view('welcome');
