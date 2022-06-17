@@ -3,35 +3,121 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\User;
+use DanielDeWit\LighthouseSanctum\Contracts\Services\EmailVerificationServiceInterface;
+use DanielDeWit\LighthouseSanctum\Exceptions\HasApiTokensException;
+use DanielDeWit\LighthouseSanctum\Traits\CreatesUserProvider;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Config\Repository as Config;
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\Contracts\HasApiTokens;
 
-final class Register
+class Register
 {
+    use CreatesUserProvider;
+
+    protected AuthManager $authManager;
+    protected Config $config;
+    protected Hasher $hash;
+    protected EmailVerificationServiceInterface $emailVerificationService;
+
+    public function __construct(
+        AuthManager $authManager,
+        Config $config,
+        Hasher $hash,
+        EmailVerificationServiceInterface $emailVerificationService
+    ) {
+        $this->authManager              = $authManager;
+        $this->config                   = $config;
+        $this->hash                     = $hash;
+        $this->emailVerificationService = $emailVerificationService;
+    }
+
     /**
-     * @param null $_
-     * @param array{} $args
+     * @param mixed $_
+     * @param array<string, mixed> $args
+     * @return array<string, string|null>
+     * @throws Exception
      */
-    public function __invoke($_, array $args)
+    public function __invoke($_, array $args): array
     {
-        if (User::query()->where('email', '=', $args['email']) == null) {
-            $user = User::create([
-                'name' => $args['name'],
-                'password' => Hash::make($args['password']),
-                'email' => $args['email']
-            ]);
+        /** @var EloquentUserProvider $userProvider */
+        $userProvider = $this->createUserProvider();
 
-            $token = $user->createToken('auth_token')->plainTextToken;
+        $user = $this->saveUser(
+            $userProvider->createModel(),
+            $this->getPropertiesFromArgs($args),
+        );
+
+        if ($user instanceof MustVerifyEmail) {
+            if (isset($args['verification_url'])) {
+                /** @var array<string, string> $verificationUrl */
+                $verificationUrl = $args['verification_url'];
+
+                $this->emailVerificationService->setVerificationUrl($verificationUrl['url']);
+            }
+
+            $user->sendEmailVerificationNotification();
 
             return [
-                'user' => $user,
-                'token' => $token,
-                'message' => 'Ok'
-            ];
-        } else {
-            return [
-                'message' => 'Email is already taken'
+                'token'  => null,
+                'status' => 'MUST_VERIFY_EMAIL',
             ];
         }
+
+        if (! $user instanceof HasApiTokens) {
+            throw new HasApiTokensException($user);
+        }
+
+        return [
+            'token'  => $user->createToken('default')->plainTextToken,
+            'status' => 'SUCCESS',
+        ];
+    }
+
+    /**
+     * @param Model $user
+     * @param array<string, mixed> $attributes
+     * @return Model
+     */
+    protected function saveUser(Model $user, array $attributes): Model
+    {
+        $user
+            ->fill($attributes)
+            ->save();
+
+        return $user;
+    }
+
+    /**
+     * @param array<string, mixed> $args
+     * @return array<string, string>
+     */
+    protected function getPropertiesFromArgs(array $args): array
+    {
+        $properties = Arr::except($args, [
+            'directive',
+            'password_confirmation',
+            'verification_url',
+        ]);
+
+        $properties['password'] = $this->hash->make($properties['password']);
+
+        return $properties;
+    }
+
+    protected function getAuthManager(): AuthManager
+    {
+        return $this->authManager;
+    }
+
+    protected function getConfig(): Config
+    {
+        return $this->config;
     }
 }

@@ -1,28 +1,59 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\GraphQL\Mutations;
 
-use Illuminate\Support\Facades\Auth;
+use DanielDeWit\LighthouseSanctum\Exceptions\HasApiTokensException;
+use DanielDeWit\LighthouseSanctum\Traits\HasAuthenticatedUser;
+use Exception;
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use Illuminate\Contracts\Translation\Translator;
+use Laravel\Sanctum\Contracts\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
 
-final class Logout
+class Logout
 {
-    /**
-     * @param  null  $_
-     * @param  array{}  $args
-     */
-    public function __invoke($_, array $args)
+    use HasAuthenticatedUser;
+
+    protected AuthFactory $authFactory;
+    protected Translator $translator;
+
+    public function __construct(AuthFactory $authFactory, Translator $translator)
     {
+        $this->authFactory = $authFactory;
+        $this->translator  = $translator;
+    }
 
+    /**
+     * @param mixed $_
+     * @param array<string, mixed> $args
+     * @return array<string, string>
+     * @throws Exception
+     */
+    public function __invoke($_, array $args): array
+    {
+        $user = $this->getAuthenticatedUser();
 
-        if (Auth::user()->currentAccessToken()->delete())
-        {
-            return [
-                'message' => 'Successfully logged out'
-            ];
-        } else {
-            return [
-                'message' => 'Something went wrong'
-            ];
+        if (! $user instanceof HasApiTokens) {
+            throw new HasApiTokensException($user);
         }
+
+        /** @var PersonalAccessToken $personalAccessToken */
+        $personalAccessToken = $user->currentAccessToken();
+        $personalAccessToken->delete();
+
+        /** @var string $message */
+        $message = $this->translator->get('Your session has been terminated');
+
+        return [
+            'status'  => 'TOKEN_REVOKED',
+            'message' => $message,
+        ];
+    }
+
+    protected function getAuthFactory(): AuthFactory
+    {
+        return $this->authFactory;
     }
 }
