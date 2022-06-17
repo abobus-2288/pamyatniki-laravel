@@ -40,35 +40,10 @@ type User {
     updated_at: DateTime!
 }
 
-input RegisterInput {
-    name: String!
-    email: String!
-    password: String!
-}
-
-type  RegisterResponse {
-    user: User
-    message: String!
-    token: String
-}
-
-input LoginInput {
-    email: String!
-    password: String!
-}
-
 type LoginResponse {
     user: User
     message: String!
     token: String
 }
 
-type LogoutResponse {
-    message: String!
-}
-
-type Mutation {
-    register(input: RegisterInput! @spread): RegisterResponse
-    login(input: LoginInput! @spread): LoginResponse
-    logout: LogoutResponse @guard
-}
+#import sanctum.graphql

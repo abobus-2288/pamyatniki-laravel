@@ -1,41 +1,70 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\GraphQL\Mutations;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use DanielDeWit\LighthouseSanctum\Exceptions\HasApiTokensException;
+use DanielDeWit\LighthouseSanctum\Traits\CreatesUserProvider;
+use Exception;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Config\Repository as Config;
+use Laravel\Sanctum\Contracts\HasApiTokens;
+use Nuwave\Lighthouse\Exceptions\AuthenticationException;
 
-final class Login
+class Login
 {
-    /**
-     * @param null $_
-     * @param array{} $args
-     */
-    public function __invoke($_, array $args)
+    use CreatesUserProvider;
+
+    protected AuthManager $authManager;
+    protected Config $config;
+
+    public function __construct(AuthManager $authManager, Config $config)
     {
-        $user = User::query()->where('email', $args['email'])->firstOrFail();
+        $this->authManager = $authManager;
+        $this->config      = $config;
+    }
 
-        if ($user !== null && Hash::check($args['password'], $user->password))
-        {
-            $token = $user->createToken('auth_token')->plainTextToken;
+    /**
+     * @param mixed $_
+     * @param array<string, string> $args
+     * @return string[]
+     * @throws Exception
+     */
+    public function __invoke($_, array $args): array
+    {
+        $userProvider = $this->createUserProvider();
 
-            return [
-                'user' => $user,
-                'message' => 'Ok',
-                'token' => $token
-            ];
+        $user = $userProvider->retrieveByCredentials([
+            'email'    => $args['email'],
+            'password' => $args['password'],
+        ]);
+
+        if (! $user || ! $userProvider->validateCredentials($user, $args)) {
+            throw new AuthenticationException('The provided credentials are incorrect.');
         }
-        if (!$user)
-        {
-            return [
-                'message' => 'No such user'
-            ];
+
+        if ($user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail()) {
+            throw new AuthenticationException('Your email address is not verified.');
         }
-        if (! Hash::check($args['password'], $user->password))
-        {
-            return [
-                'message' => 'Incorrect password'
-            ];
+
+        if (! $user instanceof HasApiTokens) {
+            throw new HasApiTokensException($user);
         }
+
+        return [
+            'token' => $user->createToken('default')->plainTextToken,
+        ];
+    }
+
+    protected function getAuthManager(): AuthManager
+    {
+        return $this->authManager;
+    }
+
+    protected function getConfig(): Config
+    {
+        return $this->config;
     }
 }
